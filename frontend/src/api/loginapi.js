@@ -1,28 +1,39 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import login_page from '../page/login_page';
+
+const loginApi = () => {
+  const navigate = useNavigate();
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    postLoginData(email, password);
+    };
+        const postLoginData = async (email, password) => {
+            try {
+                const response = await fetch('http://localhost:5000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Login successful:', data);
+                    navigate('/dashboard');
+                }
+                else {
+                    const errorData = await response.json();
+                    console.error('Login failed:', errorData);
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+            }
+        };
+
+export default loginApi;
 
 
-const APIURL = 'http://localhost:3001';
 
-export const login = async (email, password) => {
-  try {
-    const response = await axios.post(`${APIURL}/login`, { email, password });
-    return response.data;
-  } catch (error) {
-    throw new Error('Login failed');
-  }
-};
-export const register = async (name, email, password) => {
-  try {
-    const response = await axios.post(`${APIURL}/register`, { name, email, password });
-    return response.data;
-  } catch (error) {
-    throw new Error('Registration failed');
-  }
-};
-export const logout = async () => {
-    try {       
-         await axios.post(`${APIURL}/logout`);
-    } catch (error) {
-      throw new Error('Logout failed');
-    }
-  };
-  
